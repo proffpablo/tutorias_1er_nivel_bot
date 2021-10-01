@@ -21,11 +21,10 @@ def start(update: Update, context: CallbackContext) -> None:
 
     context.bot.send_message(
         chat_id = ID,
-        text = fr'Hola {user.mention_markdown_v2()}\!',
-    )
-    context.bot.send_message(
-        chat_id = ID,
-        text = 'Te puedo ayudar con lo siguiente: \n/tramites \n/informacion'
+        text = 'Hola '+ str(user.first_name) + ' ' + str(user.last_name) +
+        '\nTe puedo ayudar con lo siguiente:'
+        '\n/tramites' 
+        '\n/informacion'
     )
 
 def ejemplo_1(update, context):
