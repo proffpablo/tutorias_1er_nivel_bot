@@ -45,7 +45,7 @@ def ejemplo_1(update, context):
 
     query = update.callback_query
     query.answer()
-
+    
     query.edit_message_text(
         text = 'Tramites y formularios:'
         '\nhttps://www.frh.utn.edu.ar/tramitesyformularios/'
