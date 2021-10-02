@@ -1,8 +1,7 @@
 import logging
 import os
-from telegram import Update, ForceReply, message
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
+from telegram import Update, ForceReply, message, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -22,16 +21,51 @@ def start(update: Update, context: CallbackContext) -> None:
     context.bot.send_message(
         chat_id = ID,
         text = 'Hola '+ str(user.first_name) + ' ' + str(user.last_name) +
-        '\nTe puedo ayudar con lo siguiente:'
-        '\n/tramites' 
-        '\n/informacion'
+        '\nTe puedo ayudar en lo siguiente',
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='Trámites', callback_data='tramites')],
+            [InlineKeyboardButton(text='Información', callback_data='informacion')]
+        ])
     )
 
+def reinicio(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text='Te puedo ayudar con lo siguiente:',
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='Trámites', callback_data='tramites')],
+            [InlineKeyboardButton(text='Información', callback_data='informacion')]
+        ])
+    )
+
+
 def ejemplo_1(update, context):
-    update.message.reply_text('Tramites y formularios:\n https://www.frh.utn.edu.ar/tramitesyformularios/ \n en caso de necesitar contactate al sig. email sdfasdf@gmail.com')
+
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = 'Tramites y formularios:'
+        '\nhttps://www.frh.utn.edu.ar/tramitesyformularios/'
+        '\nEn caso de necesitar contactate al sig. email sdfasdf@gmail.com',
+        reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton(text='Volver al principio', callback_data = 'reinicio')]
+        ])
+    )
+
     
 def ejemplo_2(update, context):
-    update.message.reply_text('Información')
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = 'Información',
+        reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton(text='Volver al principio', callback_data = 'reinicio')]
+        ])    
+     )
 
 def main() -> None:
     """Start the bot."""
@@ -43,9 +77,12 @@ def main() -> None:
 
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("tramites", ejemplo_1))
-    dispatcher.add_handler(CommandHandler("informacion", ejemplo_2))
     dispatcher.add_handler(CommandHandler("ayuda", start))
+
+    dispatcher.add_handler(CallbackQueryHandler(pattern='reinicio', callback=reinicio))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='tramites', callback=ejemplo_1))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='informacion', callback=ejemplo_2))
+
 
     # Start the Bot
     updater.start_polling()
