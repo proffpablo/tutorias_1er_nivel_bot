@@ -16,12 +16,9 @@ def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
     ID = update.message.from_user.id
 
-    user = update.effective_user
-
     context.bot.send_message(
         chat_id = ID,
-        text = 'Hola '+ str(user.first_name) + ' ' + str(user.last_name) +
-        '\nTe puedo ayudar en lo siguiente',
+        text = 'Hola, te puedo ayudar en lo siguiente',
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton(text='Trámites', callback_data='tramites')],
             [InlineKeyboardButton(text='Información', callback_data='informacion')]
