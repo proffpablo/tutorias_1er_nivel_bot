@@ -6,14 +6,14 @@ Autor: Pablo Andres Martinez Rejas
 
 En conlaboración con:
 
-    Jesica Israel
+   Jesica Israel
 
-    Daniel Schlenker
+   Daniel Schlenker
 
-    Leandro Fernández Miño
+   Leandro Fernández Miño
 
-    Fausto Folgar
+   Fausto Folgar
 
-    Gabriel Soto
+   Gabriel Soto
     
-    Santiago Gimenez
+   Santiago Gimenez
