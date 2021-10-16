@@ -5,9 +5,9 @@ Bot creado para el programa de Tutorias de UTN Regional Haedo
 Autor: Pablo Andres Martinez Rejas
 
 En conlaboración con:
-    _Jesica Israel
-    _Daniel Schlenker
-    _Leandro Fernández Miño
-    _Fausto Folgar
-    _Gabriel Soto
-    _Santiago Gimenez
+    \t\n_Jesica Israel
+    \t\n_Daniel Schlenker
+    \t\n_Leandro Fernández Miño
+    \t\n_Fausto Folgar
+    \t\n_Gabriel Soto
+    \t\n_Santiago Gimenez
