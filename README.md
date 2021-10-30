@@ -4,7 +4,7 @@ Bot creado para el programa de Tutorias de UTN Regional Haedo
 
 Autor: Pablo Andres Martinez Rejas
 
-En conlaboración con:
+En colaboración con:
 
    Jesica Israel
 
