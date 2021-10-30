@@ -1,1 +1,1 @@
-bot1: python3 tutorias-bot.py
+bot1: python3 tutorias_bot.py
