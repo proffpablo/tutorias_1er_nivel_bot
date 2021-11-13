@@ -164,6 +164,7 @@ def ubicacion_auto(update, context):
         ' los vehículos tanto del personal como de los estudiantes de esta. ',
         reply_markup=InlineKeyboardMarkup([
         [InlineKeyboardButton(text='🔍 Apps útiles', callback_data = 'app_auto')],
+        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ubicacion')],
 
         ])
     )
