@@ -84,9 +84,8 @@ def reinicio(update, context):
     query.edit_message_text(
         text = "Selecciona una opción:",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='🏃🏃‍♀️ Ingreso', callback_data='ingreso')],
-            [InlineKeyboardButton(text='🙋‍♂️🙋 1er año', callback_data='first')],
-            [InlineKeyboardButton(text='👨‍🎓👩‍🎓 Avanzado', callback_data='avanzado')],
+            [InlineKeyboardButton(text='🏃🏃‍♀️ Aspirante(Seminario de ingreso)', callback_data='ingreso')],
+            [InlineKeyboardButton(text='🙋‍♂️🙋 General', callback_data='first')],
         ])
     )
 
