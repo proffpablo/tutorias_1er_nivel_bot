@@ -72,9 +72,8 @@ def start(update: Update, context: CallbackContext) -> None:
         chat_id = ID,
         text = 'Hola, selecciona una opción:',
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='🏃🏃‍♀️ Ingreso', callback_data='ingreso')],
-            [InlineKeyboardButton(text='🙋‍♂️🙋 1er año', callback_data='first')],
-            [InlineKeyboardButton(text='👨‍🎓👩‍🎓 Avanzado', callback_data='avanzado')],
+            [InlineKeyboardButton(text='🏃🏃‍♀️ Aspirante(Seminario de ingreso)', callback_data='ingreso')],
+            [InlineKeyboardButton(text='🙋‍♂️🙋 General', callback_data='first')],
         ])
     )
 
@@ -146,7 +145,8 @@ def ubicacion(update, context):
     query.answer()
 
     query.edit_message_text(
-        text = 'Indique tipo de transporte',
+        text = 'Para ir a la UTN FRH, ubicada en París 532, Haedo, Provincia de Buenos Aires, uno tiene varios medios a su '
+        'disposición para llegar por su excelente posicionamiento geográfico, te mencionaremos algunas formas para que puedas venir.',
         reply_markup=InlineKeyboardMarkup([
         [InlineKeyboardButton(text='🚗 Auto', callback_data = 'auto')],
         [InlineKeyboardButton(text='🚌 Transporte público', callback_data = 'bus')],
@@ -155,6 +155,20 @@ def ubicacion(update, context):
     )
 
 def ubicacion_auto(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = 'Si contas con un vehículo propio, el establecimiento se encuentra cerca de vías principales'
+        ' como el Acceso Oeste, Av. Gaona o Av. Rivadavia. La universidad posee un estacionamiento propio donde dejar'
+        ' los vehículos tanto del personal como de los estudiantes de esta. ',
+        reply_markup=InlineKeyboardMarkup([
+        [InlineKeyboardButton(text='🔍 Apps útiles', callback_data = 'app_auto')],
+
+        ])
+    )
+
+def app_auto(update, context):
     query = update.callback_query
     query.answer()
 
@@ -208,7 +222,8 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(pattern='ubicacion', callback=ubicacion))
     dispatcher.add_handler(CallbackQueryHandler(pattern='calendario', callback=calendario))
     dispatcher.add_handler(CallbackQueryHandler(pattern='auto', callback=ubicacion_auto))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='bus', callback=ubicacion_bus))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='auto', callback=ubicacion_auto))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='bus', callback=app_auto))
     dispatcher.add_handler(CallbackQueryHandler(pattern='genero', callback=genero))
 
     dispatcher.add_handler(MessageHandler(Filters.status_update, empty_message))
