@@ -1,6 +1,6 @@
 import logging
 import os
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction, ParseMode
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction, ParseMode, replymarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, Filters, MessageHandler
 from telegram.ext.dispatcher import run_async
 # Enable logging
@@ -9,7 +9,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
 
 # Mensaje de bienvenida.
 def send_async(context, *args, **kwargs):
@@ -21,7 +20,15 @@ def welcome(update, context, new_member):
     message = update.message
     chat_id = message.chat.id
 
-    text = ("Hola $username este es el grupo de Tutorías para 1er año."
+    message.reply_text(
+        text = 'Hola, te doy la bienvenida al grupo, contamos un asistente de guiado digital para las dudas'
+        ' mas frecuentes, para acceder a él da click en el siguiente boton:',
+        reply_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton(text = "👉Asistente de Guiado Digitar (GUIDI)👈", url = "t.me/tutoria_1er_nivel_bot")]
+        ])
+    )
+    # Mensaje sin boton
+    """ text = ("Hola $username este es el grupo de Tutorías para 1er año."
     "\nTe recomiendo iniciar el bot dando click aquí: "
     "\n👉\t@tutoria_1er_nivel_bot\t👈"
     "\nEn él podrás responder la mayoría de tus dudas con respecto"
@@ -30,7 +37,7 @@ def welcome(update, context, new_member):
     # Replace placeholders and send message
     text = text.replace("$username", new_member.first_name)
     text = text.replace("$title", message.chat.title)
-    send_async(context, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
+    send_async(context, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML) """
 
 def goodbye(update, context):
     """ Sends goodbye message when a user left the chat """
