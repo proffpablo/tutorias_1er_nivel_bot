@@ -2,7 +2,7 @@ import logging
 import os
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction, ParseMode, replymarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, Filters, MessageHandler
-from clases import Bienvenida
+import mensaje_bienvenida
 
 # Enable logging
 logging.basicConfig(
@@ -282,7 +282,7 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(pattern = 'reinicio', callback = reinicio))
 
     # Mensaje de bienvenida.
-    bienvenida = Bienvenida
+    bienvenida = mensaje_bienvenida.Bienvenida
     dispatcher.add_handler(MessageHandler(Filters.status_update, bienvenida.empty_message))
 
     # Seminario de ingreso.
