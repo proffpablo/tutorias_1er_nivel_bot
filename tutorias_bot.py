@@ -2,7 +2,8 @@ import logging
 import os
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ChatAction, ParseMode, replymarkup
 from telegram.ext import Updater, CommandHandler, CallbackContext, CallbackQueryHandler, Filters, MessageHandler
-from telegram.ext.dispatcher import run_async
+from clases import mensaje_bienvenida
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -10,62 +11,10 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Mensaje de bienvenida.
-def send_async(context, *args, **kwargs):
-    context.bot.send_message(*args, **kwargs)
+# Variables anuales
+calendario_academico = "https://www.frh.utn.edu.ar/media/calendario_academico/2021/12/29/calendario_2022.pdf"
 
-def welcome(update, context, new_member):
-    """ Welcomes a user to the chat """
-
-    message = update.message
-    chat_id = message.chat.id
-
-    message.reply_text(
-        text = 'Hola, te doy la bienvenida al grupo, contamos un asistente de guiado digital para las dudas'
-        ' mas frecuentes, para acceder a él da click en el siguiente boton:',
-        reply_markup = InlineKeyboardMarkup([
-            [InlineKeyboardButton(text = "👉Asistente de Guiado Digitar (GUIDI)👈", url = "t.me/tutoria_1er_nivel_bot")]
-        ])
-    )
-    # Mensaje sin boton
-    """ text = ("Hola $username este es el grupo de Tutorías para 1er año."
-    "\nTe recomiendo iniciar el bot dando click aquí: "
-    "\n👉\t@tutoria_1er_nivel_bot\t👈"
-    "\nEn él podrás responder la mayoría de tus dudas con respecto"
-    " a la facultad y la cursada.")
-
-    # Replace placeholders and send message
-    text = text.replace("$username", new_member.first_name)
-    text = text.replace("$title", message.chat.title)
-    send_async(context, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML) """
-
-def goodbye(update, context):
-    """ Sends goodbye message when a user left the chat """
-
-    message = update.message
-    chat_id = message.chat.id
-
-    text = "Adios, $username!"
-
-    # Replace placeholders and send message
-    text = text.replace("$username", message.left_chat_member.first_name)
-    text = text.replace("$title", message.chat.title)
-    send_async(context, chat_id=chat_id, text=text, parse_mode=ParseMode.HTML)
-
-def empty_message(update, context):
-    """
-    Empty messages could be status messages, so we check them if there is a new
-    group member, someone left the chat or if the bot has been added somewhere.
-    """
-    if update.message.new_chat_members:
-        for new_member in update.message.new_chat_members:
-            return welcome(update, context, new_member)
-
-    # Someone left the chat
-    elif update.message.left_chat_member is not None:
-        return goodbye(update, context)
-
-# Botones y contenido.
+# Menú principal.
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
     ID = update.message.from_user.id
@@ -79,8 +28,10 @@ def start(update: Update, context: CallbackContext) -> None:
         chat_id = ID,
         text = 'Hola, selecciona una opción:',
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='🏃🏃‍♀️ Aspirante(Seminario de ingreso)', callback_data='ingreso')],
-            [InlineKeyboardButton(text='🙋‍♂️🙋 General', callback_data='first')],
+            [InlineKeyboardButton(text='Seminario de Ingreso', callback_data = 'ingreso')],
+            [InlineKeyboardButton(text='Primer año', callback_data = 'primero')],
+            [InlineKeyboardButton(text='Años superiores', callback_data = 'superiores')],
+            [InlineKeyboardButton(text='Graduados', callback_data = 'graduados')],
         ])
     )
 
@@ -91,50 +42,14 @@ def reinicio(update, context):
     query.edit_message_text(
         text = "Selecciona una opción:",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='🏃🏃‍♀️ Aspirante(Seminario de ingreso)', callback_data='ingreso')],
-            [InlineKeyboardButton(text='🙋‍♂️🙋 General', callback_data='first')],
+            [InlineKeyboardButton(text='Seminario de Ingreso', callback_data = 'ingreso')],
+            [InlineKeyboardButton(text='Primer año', callback_data = 'primero')],
+            [InlineKeyboardButton(text='Años superiores', callback_data = 'superiores')],
+            [InlineKeyboardButton(text='Graduados', callback_data = 'graduados')],
         ])
     )
 
-def ingreso(update, context):
-    query = update.callback_query
-    query.answer()
-
-def first(update, context):
-    query = update.callback_query
-    query.answer()
-
-    query.edit_message_text(
-        text='Te puedo ayudar en lo siguiente:',
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton(text='📋 Trámites', callback_data='tramites')],
-            [InlineKeyboardButton(text='📚 Bibliografía', callback_data='bibliografia')],
-            [InlineKeyboardButton(text='🧭 ¿Cómo llego?', callback_data='ubicacion')],
-            [InlineKeyboardButton(text='🗓️ Calendario académico', callback_data='calendario')],
-            [InlineKeyboardButton(text='⚤ Comisión de género', callback_data='genero')],
-            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'reinicio')],
-        ])
-    )
-
-def avanzado(update, context):
-    query = update.callback_query
-    query.answer()
-
-def tramites(update, context):
-    query = update.callback_query
-    query.answer()
-
-    query.edit_message_text(
-        text = 'Tramites y formularios:'
-        '\nhttps://www.frh.utn.edu.ar/tramitesyformularios/'
-        '\nEn caso de necesitar mas información puede '
-        'consultar el siguiente e-mail sdfasdf@gmail.com',
-        reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'first')],
-        ])
-    )
-
-def bibliografia(update, context):
+"""def bibliografia(update, context):
     query = update.callback_query
     query.answer()
 
@@ -145,105 +60,259 @@ def bibliografia(update, context):
         [InlineKeyboardButton(text='🔙 Volver', callback_data = 'first')],
         ])
     )
+"""
 
-def ubicacion(update, context):
+#Ingreso
+def ingreso(update, context):
     query = update.callback_query
     query.answer()
 
     query.edit_message_text(
-        text = 'Para ir a la UTN FRH, ubicada en París 532, Haedo, Provincia de Buenos Aires, uno tiene varios medios a su '
-        'disposición para llegar por su excelente posicionamiento geográfico, te mencionaremos algunas formas para que puedas venir.',
+        text = "Selecciona una opción:",
         reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='🚗 Auto', callback_data = 'auto')],
-        [InlineKeyboardButton(text='🚌 Transporte público', callback_data = 'bus')],
-        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'first')],
+            [InlineKeyboardButton(text='Administrativo', callback_data = 'ing_adm')],
+            [InlineKeyboardButton(text='Académico', callback_data = 'ing_acad')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'reinicio')],
         ])
     )
 
-def ubicacion_auto(update, context):
+def administrativo(update, context):
     query = update.callback_query
     query.answer()
 
     query.edit_message_text(
-        text = 'Si contas con un vehículo propio, el establecimiento se encuentra cerca de vías principales'
-        ' como el Acceso Oeste, Av. Gaona o Av. Rivadavia. La universidad posee un estacionamiento propio donde dejar'
-        ' los vehículos tanto del personal como de los estudiantes de esta. ',
+        text = "Selecciona una opción:",
         reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='🔍 Apps útiles', callback_data = 'app_auto')],
-        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ubicacion')],
-
+            [InlineKeyboardButton(text='Cuanto dura el ingreso y fechas de examen', callback_data = 'ing_calendario')],
+            [InlineKeyboardButton(text='Debo certificar que curso el ingreso', callback_data = 'ing_cons_cur')],
+            [InlineKeyboardButton(text='¿Necesitas cambiarte de turno?', callback_data = 'ing_comision')],
+            [InlineKeyboardButton(text='¿Rendiste examén y pediste el día en el trabajo?', callback_data = 'ing_cons_ex')],
+            [InlineKeyboardButton(text='Necesitas comunicarte con tu tutor por otro motivo', callback_data = 'ing_tutores')],
+            [InlineKeyboardButton(text='Aprobaste el ingreso y queres cambiarte de regional', callback_data = 'ing__adm')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ingreso')],
         ])
     )
 
-def app_auto(update, context):
-    query = update.callback_query
-    query.answer()
-
-def ubicacion_bus(update, context):
-    query = update.callback_query
-    query.answer()
-
-def calendario(update, context):
+def ing_calendario(update, context):
     query = update.callback_query
     query.answer()
 
     query.edit_message_text(
-        text = 'Este es el Calendario Académico'
-        '\nhttps://www.frh.utn.edu.ar/media/calendario_academico/2021/02/18/calendario.pdf',
+        text = "Esa información la encontrarás en el calendario académico:"
+        "\n" + calendario_academico,
         reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'first')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
         ])
     )
 
-def genero(update, context):
+def constancia_cursado(update, context):
     query = update.callback_query
     query.answer()
 
     query.edit_message_text(
-        text = 'Si sufrís o sentís alguna situación de violencia o que te genere incomodidad'
-        'dentro del hámbito facultativo podemos orienterte y acompañarte.'
-        ' Escribí a comisiondegenero@frh.utn.edu.ar',
+        text = "Link a un pdf para descargar la constancia de cursado",
         reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton(text='🔙 Volver', callback_data = 'first')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
         ])
     )
+
+def cambio_comision(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Formulario para cambio de comisión",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
+        ])
+    )
+
+def constancia_examen(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Link a un pdf para descargar la constancia de examen",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
+        ])
+    )
+
+def contacto_tutores(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Poner contacto de los tutores por comisión",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
+        ])
+    )
+
+def contancia_ingreso_aprobado(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Instructivo de como solicitar la constancia de ingreso aprobado",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_adm')],
+        ])
+    )
+
+def academico(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Selecciona una opción:",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='¿Conoces que se ve en el ingreso?', callback_data = 'ing_contenidos')],
+            [InlineKeyboardButton(text='Condiciones de aprobación', callback_data = 'ing_cond_ap')],
+            [InlineKeyboardButton(text='¿Necesitas la guía de ejercicios o material de estudio?', callback_data = 'ing_material')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ingreso')],
+        ])
+    )
+
+def contenidos(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Contenidos",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_acad')],
+        ])
+    )
+
+def condiciones_aprobacion(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Selecciona una opción:",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='Matemática', callback_data = 'ing_cond_mate')],
+            [InlineKeyboardButton(text='Física', callback_data = 'ing_cond_fis')],
+            [InlineKeyboardButton(text='Introducción a la universidad', callback_data = 'ing_cond_intro')],
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_acad')],
+        ])
+    )
+
+def condiciones_matematica(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Condiciones de aprobación de matemática",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_cond_ap')],
+        ])
+    )
+
+def condiciones_fisica(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Condiciones de aprobación de física",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_cond_ap')],
+        ])
+    )
+
+def condiciones_introduccion(update, context):
+    query = update.callback_query
+    query.answer()
+
+    query.edit_message_text(
+        text = "Condiciones de aprobación de introducción a la universidad1",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_cond_ap')],
+        ])
+    )
+
+def material(update, context):
+        query = update.callback_query
+        query.answer()
+
+        query.edit_message_text(
+            text = "Selecciona una opción:",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text='Matemática', callback_data = 'ing_mat_mate')],
+                [InlineKeyboardButton(text='Física', callback_data = 'ing_mat_fis')],
+                [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_acad')],
+            ])
+        )
+
+def material_matematica(update, context):
+        query = update.callback_query
+        query.answer()
+
+        query.edit_message_text(
+            text = "Te dejamos un drive donde vas a encontrar la guía de matemática y ejercicios "
+            "\nhttps://drive.google.com/drive/folders/1RCToq5TkZ14wfGUhIl_TTmnj7WZRFhD1?usp=sharing",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_material')],
+            ])
+        )
+
+def material_fisica(update, context):
+        query = update.callback_query
+        query.answer()
+
+        query.edit_message_text(
+            text = "Te dejamos un drive donde vas a encontrar la guía de física y ejercicios "
+            "\nhttps://drive.google.com/drive/folders/1ZIRl-7JseeE0b3wdvWbSJm2yUBhzqGbX",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton(text='🔙 Volver', callback_data = 'ing_material')],
+            ])
+        )
 
 def main() -> None:
-    """Start the bot."""
-    # Create the Updater and pass it your bot's token.
+    # Se añade el token a través de una variable de entorno.
     updater = Updater(os.environ['TOKEN'], use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
 
-    # on different commands - answer in Telegram
+    # Comandos para iniciar con el bot.
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("bot", start))
+    dispatcher.add_handler(CallbackQueryHandler(pattern = 'reinicio', callback = reinicio))
 
-    dispatcher.add_handler(CallbackQueryHandler(pattern='ingreso', callback=ingreso))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='avanzado', callback=avanzado))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='first', callback=first))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='reinicio', callback=reinicio))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='tramites', callback=tramites))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='bibliografia', callback=bibliografia))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='ubicacion', callback=ubicacion))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='calendario', callback=calendario))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='auto', callback=ubicacion_auto))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='auto', callback=ubicacion_auto))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='bus', callback=app_auto))
-    dispatcher.add_handler(CallbackQueryHandler(pattern='genero', callback=genero))
+    # Mensaje de bienvenida.
+    bienvenida = mensaje_bienvenida.Bienvenida
+    dispatcher.add_handler(MessageHandler(Filters.status_update, bienvenida.empty_message))
 
-    dispatcher.add_handler(MessageHandler(Filters.status_update, empty_message))
+    # Seminario de ingreso.
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ingreso', callback = ingreso))
 
-    # Start the Bot
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_adm', callback = administrativo))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_calendario', callback = ing_calendario))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cons_cur', callback = constancia_cursado))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_comision', callback = cambio_comision))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cons_ex', callback = constancia_examen))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_tutores', callback = contacto_tutores))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing__adm', callback = contancia_ingreso_aprobado))
+
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_acad', callback = academico))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_contenidos', callback = contenidos))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cond_ap', callback = condiciones_aprobacion))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cond_mate', callback = condiciones_matematica))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cond_fis', callback = condiciones_fisica))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_cond_intro', callback = condiciones_introduccion))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_material', callback = material))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_mat_mate', callback = material_matematica))
+    dispatcher.add_handler(CallbackQueryHandler(pattern='ing_mat_fis', callback = material_fisica))
+
+
+    # Inicia el bot.
     updater.start_polling()
-
-    print("Bot is polling")
+    print("Bot iniciado")
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
-
 
 if __name__ == '__main__':
     main()
